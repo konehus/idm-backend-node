@@ -38,19 +38,52 @@ public_users.get("/isbn/:isbn", function (req, res) {
 // Get book details based on author
 public_users.get("/author/:author", function (req, res) {
   //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  const author = req.params.author;
+  let validBooks = [];
+  for (let bookISBN in books) {
+    const bookAuthor = books[bookISBN].author;
+    if (bookAuthor === author) {
+      validBooks.push(books[bookISBN]);
+    }
+  }
+
+  if (validBooks.length > 0) {
+    res.send(JSON.stringify(validBooks, null, 4));
+  } else {
+    return res.status(404).json({ message: "Provided author does not exist" });
+  }
 });
 
 // Get all books based on title
 public_users.get("/title/:title", function (req, res) {
   //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  const title = req.params.title;
+  let validBooks = [];
+  for (let bookISBN in books) {
+    const bookTitle = books[bookISBN].title;
+    if (bookTitle === title) {
+      validBooks.push(books[bookISBN]);
+    }
+  }
+
+  if (validBooks.length > 0) {
+    res.send(JSON.stringify(validBooks, null, 4));
+  } else {
+    return res
+      .status(404)
+      .json({ message: "Provided book title does not exist" });
+  }
 });
 
 //  Get book review
 public_users.get("/review/:isbn", function (req, res) {
   //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  const isbn = req.params.isbn;
+  if (books[isbn] !== null) {
+    res.send(JSON.stringify(books[isbn].reviews, null, 4));
+  } else {
+    return res.status(404).json({ message: "Provided book does not exist" });
+  }
 });
 
 module.exports.general = public_users;
