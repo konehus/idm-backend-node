@@ -56,7 +56,45 @@ regd_users.post("/login", (req, res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
-  return res.status(300).json({ message: "Yet to be implemented" });
+  const isbn = req.params.isbn;
+  const review = req.body.review;
+  const username = req.session.authorization.username;
+
+  let validBook = books[isbn];
+  if (validBook) {
+    const reviews = validBook.reviews;
+    const existingReview = reviews[username];
+    reviews[username] = review;
+    if (existingReview) {
+      return res.status(200).send("Review successfully updated");
+    } else {
+      return res.status(200).send("Review successfully added");
+    }
+  } else {
+    return res.status(404).json({ message: "Provided book does not exist" });
+  }
+});
+
+// Remove a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  //Write your code here
+  const isbn = req.params.isbn;
+  const username = req.session.authorization.username;
+  let validBook = books[isbn];
+
+  if (validBook) {
+    const existingReview = validBook.reviews[username];
+    if (existingReview) {
+      delete validBook.reviews[username];
+    }
+    return res
+      .status(200)
+      .send(
+        `Review from User, ${username} removed successfully from Book (ISBN: ${isbn}).`
+      );
+  } else {
+    return res.status(404).json({ message: "Provided book does not exist" });
+  }
 });
 
 module.exports.authenticated = regd_users;
